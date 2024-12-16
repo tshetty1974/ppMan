@@ -2,9 +2,14 @@ import ctypes
 import numpy as np
 import os
 
-# Load Kyber shared library
-current_dir = os.path.dirname(os.path.abspath(__file__))
-libkyber_path = os.path.join(current_dir, "../ref/libkyber.so")
+librandombytes_path = "/home/franticfenny/Desktop/ppman/kyber/ref/librandombytes.so"
+
+libfips202_path = "/home/franticfenny/Desktop/ppman/kyber/ref/lib/libpqcrystals_fips202_ref.so"
+libkyber_path = "/home/franticfenny/Desktop/ppman/kyber/ref/lib/libpqcrystals_kyber768_ref.so"
+
+# Load dependencies first
+fips202_lib = ctypes.CDLL(libfips202_path, mode=ctypes.RTLD_GLOBAL)
+randombytes_lib = ctypes.CDLL(librandombytes_path, mode=ctypes.RTLD_GLOBAL)
 kyber_lib = ctypes.CDLL(libkyber_path)
 
 # Define Kyber constants

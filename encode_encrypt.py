@@ -1,64 +1,100 @@
+import logging
 from encoding import process_string
 from kyber.pywrapper.encryption import generate_keypair, encapsulate, decapsulate
 from Crypto.Cipher import AES
 from Crypto.Util.Padding import pad, unpad
 import base64
 
-#def binary_coversion(user_input)
-        ##logic to be written
-        #return binary_data 
+# Set up logging
+logging.basicConfig(level=logging.INFO)
+
+def binary_conversion(data):
+    """Convert the entire string (including '|') into binary."""
+    return ''.join(format(ord(char), '08b') for char in data)
+
+def binary_to_string(binary_data):
+    """Convert binary back to the original string (with '|')."""
+    return ''.join(chr(int(binary_data[i:i+8], 2)) for i in range(0, len(binary_data), 8))
+
 def aes_encrypt(data, key):
     """Encrypt the data using AES with the shared secret as the key."""
-    cipher = AES.new(key[:16], AES.MODE_CBC)  # Use the first 16 bytes of the key
-    ciphertext = cipher.encrypt(pad(data.encode(), AES.block_size))
-    return base64.b64encode(cipher.iv + ciphertext).decode()
+    try:
+        cipher = AES.new(key[:16], AES.MODE_CBC)  # Use the first 16 bytes of the key
+        ciphertext = cipher.encrypt(pad(data.encode(), AES.block_size))
+        return base64.b64encode(cipher.iv + ciphertext).decode()
+    except Exception as e:
+        logging.error(f"AES encryption failed: {e}")
+        raise
 
 def aes_decrypt(data, key):
     """Decrypt the data using AES with the shared secret as the key."""
-    raw_data = base64.b64decode(data)
-    iv = raw_data[:16]
-    ciphertext = raw_data[16:]
-    cipher = AES.new(key[:16], AES.MODE_CBC, iv)
-    plaintext = unpad(cipher.decrypt(ciphertext), AES.block_size)
-    return plaintext.decode()
+    try:
+        raw_data = base64.b64decode(data)
+        iv = raw_data[:16]
+        ciphertext = raw_data[16:]
+        cipher = AES.new(key[:16], AES.MODE_CBC, iv)
+        plaintext = unpad(cipher.decrypt(ciphertext), AES.block_size)
+        return plaintext.decode()
+    except Exception as e:
+        logging.error(f"AES decryption failed: {e}")
+        raise
 
 def encode_and_encrypt(user_input):
-    # Encode the input
-    encoded_string = process_string(user_input)
-    print(f"Encoded String: {encoded_string}")
+    try:
+        # Encode the input
+        encoded_string = process_string(user_input)
+        logging.info(f"Encoded String: {encoded_string}")
 
-    # Generate Kyber keys
-    public_key, private_key = generate_keypair()
-    print(f"Public Key: {public_key}")
-    print(f"Private Key: {private_key}")
+        # Convert to binary
+        binary_data = binary_conversion(encoded_string)
+        logging.info(f"Binary Data: {binary_data}")
 
-    # Encapsulate the shared secret using Kyber
-    ciphertext, shared_secret = encapsulate(public_key)
-    print(f"Ciphertext (Kyber): {ciphertext}")
-    print(f"Shared Secret: {shared_secret}")
+        # Generate Kyber keys
+        public_key, private_key = generate_keypair()
+        logging.info(f"Public Key: {public_key}")
+        logging.info(f"Private Key: {private_key}")
 
-    # Encrypt the encoded string with AES using the shared secret
-    encrypted_encoded_string = aes_encrypt(encoded_string, shared_secret)
-    print(f"Encrypted Encoded String: {encrypted_encoded_string}")
+        # Encapsulate the shared secret using Kyber
+        ciphertext, shared_secret = encapsulate(public_key)
+        logging.info(f"Ciphertext (Kyber): {ciphertext}")
+        logging.info(f"Shared Secret: {shared_secret}")
 
-    # Decapsulate the shared secret (for demonstration)
-    recovered_secret = decapsulate(ciphertext, private_key)
-    print(f"Recovered Shared Secret: {recovered_secret}")
+        # Encrypt the binary data with AES using the shared secret
+        encrypted_binary_data = aes_encrypt(binary_data, shared_secret)
+        logging.info(f"Encrypted Binary Data: {encrypted_binary_data}")
 
-    # Verify the shared secret matches
-    assert shared_secret == recovered_secret, "Shared secrets do not match!"
+        return encrypted_binary_data, ciphertext, private_key
+    except Exception as e:
+        logging.error(f"Encode and Encrypt failed: {e}")
+        raise
 
-    # Decrypt the encoded string using the recovered shared secret
-    decrypted_encoded_string = aes_decrypt(encrypted_encoded_string, recovered_secret)
-    print(f"Decrypted Encoded String: {decrypted_encoded_string}")
+def decrypt_and_decode(encrypted_binary_data, ciphertext, private_key):
+    try:
+        # Decapsulate the shared secret
+        recovered_secret = decapsulate(ciphertext, private_key)
+        logging.info(f"Recovered Shared Secret: {recovered_secret}")
 
-    # Verify the decrypted encoded string matches the original encoded string
-    assert decrypted_encoded_string == encoded_string, "Decrypted encoded string does not match the original!"
-    print("Encoding, encryption, and decryption successful!")
-    return encrypted_encoded_string
+        # Decrypt the binary data
+        decrypted_binary_data = aes_decrypt(encrypted_binary_data, recovered_secret)
+        logging.info(f"Decrypted Binary Data: {decrypted_binary_data}")
 
-# Example usage
-if __name__ == "__main__":
-    user_input = input("Enter a string to encode and encrypt: ")
-    #binay_data=binary_conversion(user_input)
-    #encode_and_encrypt(binary_data)
+        # Convert binary back to string
+        decoded_string = binary_to_string(decrypted_binary_data)
+        logging.info(f"Decoded String: {decoded_string}")
+
+        # Split and decode parts
+        parts = decoded_string.split('|')
+        decoded_parts = []
+        for part in parts:
+            try:
+                # Decode as hex if possible
+                decoded_parts.append(bytes.fromhex(part).decode())
+            except ValueError:
+                # Otherwise, treat as ASCII
+                decoded_parts.append(part)
+
+        logging.info(f"Decoded Parts: {decoded_parts}")
+        return decoded_parts
+    except Exception as e:
+        logging.error(f"Decrypt and Decode failed: {e}")
+        raise

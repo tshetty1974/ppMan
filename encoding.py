@@ -36,7 +36,3 @@ def process_string(user_input):
     encoded_string = "|".join(encoded_parts)
     print(f"Encoded String: {encoded_string}")
     return encoded_string
-
-# Get user input
-user_input = input("Enter a custom string: ")
-encoded_result = process_string(user_input)
