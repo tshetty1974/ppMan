@@ -20,26 +20,32 @@ def get_data_from_transaction(tx_hash):
     except Exception as e:
         raise ValueError(f"Failed to fetch transaction details: {e}")
 
-    # Extract the data field
     hex_data = tx_receipt.get("input", None)
     if not hex_data:
         raise ValueError("No data found in the transaction.")
 
+    # if not isinstance(hex_data, str):
+    #     hex_data = str(hex_data)  # Ensure it's a string
+    print(f"hey i am retrive after getting from bc:{hex_data}")
+    # binary_data = Web3.to_bytes(hexstr=hex_data)  
+    # print(f"Retrieved Binary Data: {binary_data}")
+    return hex_data
+
     # # Convert hex data back to binary
     # if isinstance(hex_data, bytes):
     #     hex_data = hex_data.hex()  # Convert HexBytes to string if needed
-    binary_data = Web3.to_bytes(hexstr=hex_data)
+    # binary_data = Web3.to_bytes(hexstr=hex_data)
 
-    print(f"Retrieved Binary Data: {binary_data}")
-    return binary_data
+    # print(f"Retrieved Binary Data: {binary_data}")
+    # return binary_data 
 
-# Example Usage
-if __name__ == "__main__":
-    # Replace with the transaction hash you want to retrieve data from
-    transaction_hash = "0x235c4909c980b2acfc3b58b2c29eafe7e98d301160ba3e43eb741a3a441db4d4"
+# # Example Usage
+# if __name__ == "__main__":
+#     # Replace with the transaction hash you want to retrieve data from
+#     transaction_hash = "0x235c4909c980b2acfc3b58b2c29eafe7e98d301160ba3e43eb741a3a441db4d4"
 
-    try:
-        original_binary_data = get_data_from_transaction(transaction_hash)
-        print(f"Original Binary Data: {original_binary_data}")
-    except Exception as e:
-        print(f"Error: {e}")
+#     try:
+#         original_binary_data = get_data_from_transaction(transaction_hash)
+#         print(f"Original Binary Data: {original_binary_data}")
+#     except Exception as e:
+#         print(f"Error: {e}")

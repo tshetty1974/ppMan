@@ -24,8 +24,10 @@ def store_data_on_chainn(binary_data):
     balance = web3.eth.get_balance(sender_address)
     print(f"Sender Balance: {web3.from_wei(balance, 'ether')} ETH")
 
-    # Convert binary data to hex format
-    hex_data = Web3.to_hex(binary_data)  # Converts binary to hex string
+    print(f"hey i am storeInfura before putting in blockchain:{binary_data}")
+
+    # # Convert binary data to hex format
+    # hex_data = Web3.to_hex(binary_data)  # Converts binary to hex string
 
     # Get the current nonce for the sender address
     nonce = web3.eth.get_transaction_count(sender_address)
@@ -35,10 +37,10 @@ def store_data_on_chainn(binary_data):
         "from": sender_address,
         "to": "0xC2996213e5D2e9F314892B089B7B4F27e54e50cE",  
         "value": 0,  # No ETH transferred
-        "gas": 21250,  
+        "gas": 23050,  
         "gasPrice": web3.to_wei("10", "gwei"),  
         "nonce": nonce,
-        "data": hex_data, 
+        "data": binary_data, 
     }
 
     # Sign the transaction
@@ -50,9 +52,9 @@ def store_data_on_chainn(binary_data):
 
     return web3.to_hex(tx_hash)  # Return the transaction hash
 
-# Example Usage
-if __name__ == "__main__":
-    # Example encrypted binary message
-    encrypted_message = b'\x48\x65\x6c\x6c\x6f\x2c\x20\x45\x74\x68\x65\x72\x65\x75\x7d'  # Binary data
-    transaction_hash = store_data_on_chainn(encrypted_message)
-    print(f"Transaction Hash: {transaction_hash}")
+# # Example Usage
+# if __name__ == "__main__":
+#     # Example encrypted binary message
+#     encrypted_message = b'\x48\x65\x6c\x6c\x6f\x2c\x20\x45\x74\x68\x65\x72\x65\x75\x7d'  # Binary data
+#     transaction_hash = store_data_on_chainn(encrypted_message)
+#     print(f"Transaction Hash: {transaction_hash}")

@@ -36,3 +36,4 @@ def process_string(user_input):
     encoded_string = "|".join(encoded_parts)
     print(f"Encoded String: {encoded_string}")
     return encoded_string
+

@@ -1,5 +1,5 @@
 import logging
-from encoding import process_string
+from OnChain.encoding import process_string
 from kyber.pywrapper.encryption import generate_keypair, encapsulate, decapsulate
 from Crypto.Cipher import AES
 from Crypto.Util.Padding import pad, unpad

@@ -1,0 +1,16 @@
+{
+    "manifest_version": 3,
+    "name": "My Data Extension",
+    "version": "1.0",
+    "description": "A Chrome extension to send data to a backend.",
+    "permissions": ["activeTab", "storage"],
+    "host_permissions": ["http://localhost:5000/*"],
+    "action": {
+      "default_popup": "popup.html",
+      "default_icon": "icon.png"
+    },
+    "background": {
+      "service_worker": "background.js"
+    }
+  }
+  
