@@ -90,6 +90,39 @@ class EncryptionScheme:
             raise ValueError("Invalid decoding scheme.")
 
     @staticmethod
+    def process_string(user_input):
+        length = len(user_input)
+        num_parts = length // 4
+        remainder = length % 4
+
+        encoded_parts = []
+        for i in range(num_parts):
+            part = user_input[i * 4: (i + 1) * 4]
+            scheme = (i % 3) + 1
+            encoded_parts.append(EncryptionScheme.encode(part, scheme))
+
+        if remainder > 0:
+            remaining_part = user_input[-remainder:]
+            encoded_parts.append(EncryptionScheme.encode(remaining_part, 1))
+
+        return "|".join(encoded_parts)
+
+    @staticmethod
+    def decode_string(encoded_string):
+        encoded_parts = encoded_string.split("|")
+        decoded_parts = []
+
+        for i, part in enumerate(encoded_parts):
+            if part:
+                scheme = (i % 3) + 1
+                try:
+                    decoded_parts.append(EncryptionScheme.decode(part, scheme))
+                except Exception as e:
+                    print(f"Skipping problematic part: {part}. Error: {e}")
+
+        return "".join(decoded_parts)
+
+    @staticmethod
     def store_on_blockchain(binary_data):
         infura_url = os.getenv("INFURA_URL")
         private_key = os.getenv("PRIVATE_KEY")
