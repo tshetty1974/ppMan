@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Encryption Settings</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <h1>Encryption Settings</h1>
+  <form id="encryption-form">
+    <div>
+      <label for="password">Password:</label>
+      <input type="password" id="password" name="password" required>
+    </div>
+    <div>
+      <label for="chain">Chain:</label>
+      <input type="text" id="chain" name="chain" required>
+    </div>
+    <div>
+      <label for="encryption-scheme">Encryption Scheme:</label>
+      <select id="encryption-scheme" name="encryption-scheme" required>
+        <option value="1">Scheme 1</option>
+        <option value="2">Scheme 2</option>
+        <option value="3">Scheme 3</option>
+      </select>
+    </div>
+    <button type="submit">Submit</button>
+  </form>
+</body>
+</html>
