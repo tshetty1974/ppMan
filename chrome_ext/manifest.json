@@ -3,8 +3,8 @@
     "name": "ppMan",
     "version": "1.0",
     "description": "Encryption your way",
-    "permissions": ["activeTab", "storage"],
-    "host_permissions": ["http://localhost:5000/*"],
+    "permissions": ["activeTab", "storage","http://127.0.0.1:5000/*"],
+    "host_permissions": [],
     "action": {
       "default_popup": "popup.html"
       }

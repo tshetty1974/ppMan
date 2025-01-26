@@ -3,30 +3,59 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Encryption Settings</title>
+  <title>Password Manager</title>
   <link rel="stylesheet" href="styles.css">
-  <script src="popup.js"></script>
 </head>
 <body>
-  <h1>Encryption Settings</h1>
-  <form id="encryption-form">
-    <div>
-      <label for="password">Password:</label>
-      <input type="password" id="password" name="password" required>
+  <div id="main-container">
+    <!-- Initial Options -->
+    <div id="options">
+      <h2>Protected Password MANger</h2>
+      <h4>PPMAN to the rescue</h4>
+      <button id="store-password-btn">Store Password</button>
+      <button id="retrieve-password-btn">Retrieve Password</button>
     </div>
-    <div>
-      <label for="chain">Chain:</label>
-      <input type="text" id="chain" name="chain" required>
+
+    <!-- Store Password Form -->
+    <div id="store-password-form" style="display: none;">
+      <h3>Store Password</h3>
+      <form id="store-form">
+        <label for="password">Password:</label>
+        <input type="password" id="password" placeholder="Enter your password" required>
+        
+        <label for="app">Application/Service name:</label>
+        <input type="text" id="app" placeholder="Enter the application or service of the password" required>
+        
+        <label for="chain">Blockchain:</label>
+        <select id="chain">
+          <option value="ethereum">Ethereum</option>
+          <option value="polygon">Polygon</option>
+        </select>
+
+        <label for="scheme">Encoding Scheme:</label>
+        <select id="scheme">
+          <option value="Scheme 1">Scheme 1</option>
+          <option value="Scheme 2">Scheme 2</option>
+          <option value="Scheme 3">Scheme 3</option>
+        </select>
+
+        <button type="submit">Add Password</button>
+      </form>
+      <button id="back-to-options">Back</button>
     </div>
-    <div>
-      <label for="encryption-scheme">Encryption Scheme:</label>
-      <select id="encryption-scheme" name="encryption-scheme" required>
-        <option value="1">Scheme 1</option>
-        <option value="2">Scheme 2</option>
-        <option value="3">Scheme 3</option>
-      </select>
+
+    <!-- Retrieve Password Form -->
+    <div id="retrieve-password-form" style="display: none;">
+      <h3>Retrieve Password</h3>
+      <form id="retrieve-form">
+        <label for="tx-hash">Transaction Hash:</label>
+        <input type="text" id="tx-hash" placeholder="Enter transaction hash" required>
+        <button type="submit">Get Password</button>
+      </form>
+      <button id="back-to-options-retrieve">Back</button>
     </div>
-    <button type="submit">Submit</button>
-  </form>
+  </div>
+
+  <script src="popup.js"></script>
 </body>
 </html>
