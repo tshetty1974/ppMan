@@ -29,8 +29,23 @@ def decode_string(encoded_string):
     original_string = "".join(decoded_parts)
     print(f"Decoded String: {original_string}")
     return original_string
+def decode_string(encoded_string):
+    encoded_parts = encoded_string.split("|")
+    decoded_parts = []
+
+    for i, part in enumerate(encoded_parts):
+        if part:  # Only process non-empty parts
+            scheme = (i % 3) + 1  # Scheme depends on the count of '|' passed (1-based index)
+            try:
+                decoded_parts.append(decode_part(part, scheme))
+            except ValueError as e:
+                print(f"Skipping problematic part: {part}. Error: {e}")
+
+    # Combine all decoded parts
+    original_string = "".join(decoded_parts)
+    print(f"Decoded String: {original_string}")
+    return original_string
 
 # # Example usage
-# # Assuming process_string is correctly defined
 # encoded_string = "SGVsbA==|6f403132|Mw=="
 # decode_string(encoded_string)
