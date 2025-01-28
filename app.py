@@ -3,8 +3,30 @@ from flask_cors import CORS
 from Scheme1 import Scheme1  # Ensure the Scheme1 class is correctly imported
 
 app = Flask(__name__)
-CORS(app, resources={r"/*": {"origins": "chrome-extension://nemjagbapekbpfhbpokipfgghlkmalif"}})
+CORS(app, resources={r"/*": {"origins": "*"}})  # Allow CORS globally
 
+@app.route("/retrieve-password", methods=["POST"])
+def retrieve_password():
+    data = request.json
+    tx_hash = data.get("transaction_hash")
+
+    try:
+        # Initialize Scheme1 instance
+        handler = Scheme1()
+
+        # Step 1: Retrieve encrypted data from blockchain
+        encrypted_data = handler.retrieve_data_from_chain(tx_hash)
+
+        # Step 2: Decrypt the data
+        decrypted_password = handler.decrypt_data(encrypted_data)
+
+        # Generate JSON response
+        response_data = {"password": decrypted_password}
+
+        return jsonify(response_data), 200
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 @app.route("/store-password", methods=["OPTIONS"])
 def store_password_options():
     response = jsonify({"message": "CORS preflight successful"})
