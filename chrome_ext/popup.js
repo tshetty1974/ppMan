@@ -46,6 +46,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (scheme === "Scheme 1") {
       try {
+        console.log("Storing password for:", app);
+
         // Backend call for storing password
         const response = await fetch("http://127.0.0.1:5000/store-password", {
           method: "POST",
@@ -53,13 +55,23 @@ document.addEventListener("DOMContentLoaded", () => {
           body: JSON.stringify({ password, app, chain }),
         });
 
-        if (!response.ok) throw new Error("Failed to store password.");
+        console.log("Store Password Response:", response);
+
+        if (!response.ok) {
+          throw new Error(`Failed to store password. HTTP Status: ${response.status}`);
+        }
 
         const data = await response.json();
-        generateAndDownloadJson(data);
+        console.log("JSON Response from Flask:", data);
+
+        if (data.transaction_hash) {
+          generateAndDownloadJson(data);
+        } else {
+          alert("Error storing data. No transaction hash received.");
+        }
       } catch (error) {
         console.error("Error storing password:", error);
-        alert("An error occurred while storing the password.");
+        alert(`An error occurred while storing the password: ${error.message}`);
       }
     } else {
       alert("Only Scheme 1 is supported currently.");
@@ -73,16 +85,23 @@ document.addEventListener("DOMContentLoaded", () => {
     const txHash = document.getElementById("tx-hash").value;
 
     try {
+      console.log("Retrieving password for TX Hash:", txHash);
+
       const response = await fetch("http://127.0.0.1:5000/retrieve-password", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ transaction_hash: txHash }),
       });
 
-      if (!response.ok) throw new Error("Failed to retrieve password.");
+      console.log("Retrieve Password Response:", response);
+
+      if (!response.ok) {
+        throw new Error(`Failed to retrieve password. HTTP Status: ${response.status}`);
+      }
 
       const data = await response.json();
-      
+      console.log("JSON Response from Flask:", data);
+
       if (data.error) {
         alert("Error retrieving password: " + data.error);
         return;
@@ -91,14 +110,14 @@ document.addEventListener("DOMContentLoaded", () => {
       alert(`Retrieved Password: ${data.password}`);
     } catch (error) {
       console.error("Error retrieving password:", error);
-      alert("An error occurred while retrieving the password.");
+      alert(`An error occurred while retrieving the password: ${error.message}`);
     }
   });
 
   // Generate and download JSON file
   function generateAndDownloadJson(data) {
     try {
-      console.log("Generated JSON:", data);
+      console.log("Generating JSON File:", data);
 
       // Create JSON file
       const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
